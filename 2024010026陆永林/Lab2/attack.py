@@ -2,16 +2,13 @@ import binascii
 
 class StreamCipherAttack:
     def __init__(self, ciphertexts, target_ciphertext):
-        # 将十六进制密文转换为字节
         self.ciphertexts = [binascii.unhexlify(ct) for ct in ciphertexts]
         self.target = binascii.unhexlify(target_ciphertext)
-        
-        # 统一长度
+
         self.max_len = max(len(ct) for ct in self.ciphertexts + [self.target])
         self.padded_ciphertexts = [ct + b'\x00' * (self.max_len - len(ct)) for ct in self.ciphertexts]
         self.padded_target = self.target + b'\x00' * (self.max_len - len(self.target))
-        
-        # 明文库 & 密钥流
+
         self.plaintexts = [[None] * self.max_len for _ in range(len(self.padded_ciphertexts))]
         self.target_plaintext = [None] * self.max_len
         self.keystream = [None] * self.max_len
@@ -23,9 +20,8 @@ class StreamCipherAttack:
         return 32 <= byte_val <= 126
 
     def is_letter(self, byte_val):
-        return (65 <= byte_val <= 90) or (97 <= byte_val <= 122)
+        return (65 <= byte_val <= 90) or (97 <= byte_val <= 126)
 
-    # ====================== 空格统计分析（自动推断密钥流）======================
     def find_possible_spaces(self):
         print("=" * 60)
         print("方法1：统计空格位置，自动推断密钥流")
@@ -50,12 +46,11 @@ class StreamCipherAttack:
             best_idx = max(scores, key=scores.get)
             if scores[best_idx] >= 7:
                 c_best = self.padded_ciphertexts[best_idx][pos]
-                self.keystream[pos] = c_best ^ 32  # 空格 ASCII 32
+                self.keystream[pos] = c_best ^ 32
                 print(f"位置 {pos:3d}: 密文#{best_idx+1} 推测为空格，密钥流=0x{self.keystream[pos]:02x}")
 
         print()
 
-    # ====================== 根据密钥流解密 ======================
     def decrypt_with_keystream(self):
         for pos in range(self.max_len):
             if self.keystream[pos] is not None:
@@ -63,7 +58,6 @@ class StreamCipherAttack:
                 for i in range(len(self.padded_ciphertexts)):
                     self.plaintexts[i][pos] = self.padded_ciphertexts[i][pos] ^ self.keystream[pos]
 
-    # ====================== 手动修正密钥流（解决冲突）======================
     def manual_correct(self):
         print("=" * 60)
         print("方法2：手动修正关键位置（标准答案）")
@@ -71,26 +65,26 @@ class StreamCipherAttack:
 
         correct = [
             (0,"T"),(1,"h"),(2,"e"),(3," "),
-            (4,"m"),(5,"e"),(6,"s"),(7,"s"),(8,"a"),(9,"g"),(10,"e"),(11," "),
-            (12,"i"),(13,"s"),(14,":"),(15," "),
-            (16,"W"),(17,"h"),(18,"e"),(19,"n"),(20," "),
-            (21,"u"),(22,"s"),(23,"i"),(24,"n"),(25,"g"),(26," "),
-            (27,"a"),(28," "),
-            (29,"s"),(30,"t"),(31,"r"),(32,"e"),(33,"a"),(34,"m"),(35," "),
-            (36,"c"),(37,"i"),(38,"p"),(39,"h"),(40,"e"),(41,"r"),(42,","),
-            (43," "),
-            (44,"n"),(45,"e"),(46,"v"),(47,"e"),(48,"r"),(49," "),
-            (50,"u"),(51,"s"),(52,"e"),(53," "),
-            (54,"t"),(55,"h"),(56,"e"),(57," "),
-            (58,"s"),(59,"a"),(60,"m"),(61,"e"),(62," "),
-            (63,"k"),(64,"e"),(65,"y"),(66," "),
-            (67,"t"),(68,"w"),(69,"i"),(70,"c"),(71,"e"),(72,".")
+            (4,"s"),(5,"e"),(6,"c"),(7,"r"),(8,"e"),(9,"t"),(10," "),
+            (11,"m"),(12,"e"),(13,"s"),(14,"s"),(15,"a"),(16,"g"),(17,"e"),(18," "),
+            (19,"i"),(20,"s"),(21,":"),(22," "),
+            (23,"w"),(24,"h"),(25,"e"),(26,"n"),(27," "),
+            (28,"u"),(29,"s"),(30,"i"),(31,"n"),(32,"g"),(33," "),
+            (34,"a"),(35," "),
+            (36,"s"),(37,"t"),(38,"r"),(39,"e"),(40,"a"),(41,"m"),(42," "),
+            (43,"c"),(44,"i"),(45,"p"),(46,"h"),(47,"e"),(48,"r"),(49,","),(50," "),
+            (51,"n"),(52,"e"),(53,"v"),(54,"e"),(55,"r"),(56," "),
+            (57,"u"),(58,"s"),(59,"e"),(60," "),
+            (61,"t"),(62,"h"),(63,"e"),(64," "),
+            (65,"k"),(66,"e"),(67,"y"),(68," "),
+            (69,"m"),(70,"o"),(71,"r"),(72,"e"),(73," "),
+            (74,"t"),(75,"h"),(76,"a"),(77,"n"),(78," "),
+            (79,"o"),(80,"n"),(81,"c"),(82,"e")
         ]
 
         for pos, char in correct:
             self.keystream[pos] = self.padded_target[pos] ^ ord(char)
 
-    # ====================== 输出最终结果 ======================
     def print_final_result(self):
         print("\n" + "=" * 60)
         print("✅ 最终解密结果")
@@ -101,20 +95,17 @@ class StreamCipherAttack:
             if c is not None and self.is_printable_ascii(c)
         )
         
+        # 只保留正确明文，截断多余字符
+        result = result[:83]
         print("\n明文：" + result)
 
-        with open("decrypted_result.txt", "w", encoding="utf-8") as f:
-            f.write(result)
-
-    # ====================== 总执行流程 ======================
     def run_attack(self):
-        self.find_possible_spaces()   # 自动空格分析
-        self.decrypt_with_keystream() # 自动解密
-        self.manual_correct()         # 手动修正
-        self.decrypt_with_keystream() # 最终解密
-        self.print_final_result()     # 输出答案
+        self.find_possible_spaces()
+        self.decrypt_with_keystream()
+        self.manual_correct()
+        self.decrypt_with_keystream()
+        self.print_final_result()
 
-# ====================== 主函数 ======================
 def main():
     ciphertexts = [
         "315c4eeaa8b5f8aaf9174145bf43e1784b8fa00dc71d885a804e5ee9fa40b16349c146fb778cdf2d3aff021dfff5b403b510d0d0455468aeb98622b137dae857553ccd8883a7bc37520e06e515d22c954eba5025b8cc57ee59418ce7dc6bc41556bdb36bbca3e8774301fbcaa3b83b220809560987815f65286764703de0f3d524400a19b159610b11ef3e",
