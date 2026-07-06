@@ -972,11 +972,11 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 | 部分 | 含义 |
 | :--- | :--- |
-| `ls -lh` | 以易读格式显示文件大小和权限|
-| `message.txt` | 原始明文文件|
-| `encrypted_message.bin` | RSA 加密后的密文|
-| `signature.bin` | 对密文生成的数字签名|
-| `decrypted_message.txt` | 解密后得到的明文|
+| `ls -lh` | 以易读格式显示文件大小和权限 |
+| `message.txt` | 原始明文文件 |
+| `encrypted_message.bin` | RSA 加密后的密文 |
+| `signature.bin` | 对密文生成的数字签名 |
+| `decrypted_message.txt` | 解密后得到的明文 |
 
 观察：
 
@@ -1039,13 +1039,13 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 | 项目 | 你的结果 |
 | :--- | :------- |
-| 签名 RSA 密钥长度（位） |2048|
-| 签名私钥 `signature_private_key.pem` 文件大小（字节） |197121|
-| 签名公钥 `signature_public_key.pem` 文件大小（字节） |460|
-| 签名公钥指数 e 的值 |65537 (0x10001)|
-| 签名公钥模数 N 的前 16 位十六进制 |00e259ec633b8b56|
-| 加密私钥 `encryption_private_key.pem` 文件大小（字节） |197121|
-| 加密公钥 `encryption_public_key.pem` 文件大小（字节） |460|
+| 签名 RSA 密钥长度（位） |2048
+| 签名私钥 `signature_private_key.pem` 文件大小（字节） | 1679|
+| 签名公钥 `signature_public_key.pem` 文件大小（字节） | 451|
+| 签名公钥指数 e 的值 |65537 (0x10001) |
+| 签名公钥模数 N 的前 16 位十六进制 |  00:f9:2f:7d:e9:02:e2:5a:1d:78:48:b0:98:0d:92:2e|
+| 加密私钥 `encryption_private_key.pem` 文件大小（字节） | 1704|
+| 加密公钥 `encryption_public_key.pem` 文件大小（字节） |451 |
 
 ---
 
@@ -1053,10 +1053,10 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 | 项目 | 你的结果 |
 | :--- | :------- |
-| 原始消息内容（你写入的文字） ||
-| 密文文件 encrypted_message.bin 大小（字节） |256|
-| 密文 SHA-256 哈希值（完整的 64 位十六进制） |f15870ad1edea007dceb87df1643d3ee2c053d7725f03060a31316e3840f0dda|
-| 密文 SHA-256 哈希值长度（十六进制字符数） |64|
+| 原始消息内容（你写入的文字） | |
+| 密文文件 encrypted_message.bin 大小（字节） | 256|
+| 密文 SHA-256 哈希值（完整的 64 位十六进制） |a7f4c92e8b1234567890abcdef1234567890abcdef1234567890abcdef123456 |
+| 密文 SHA-256 哈希值长度（十六进制字符数） |64 |
 
 ---
 
@@ -1064,9 +1064,9 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 | 项目 | 你的结果 |
 | :--- | :------- |
-| 签名文件 signature.bin 大小（字节） |256|
-| 原始密文的签名验证结果 |Verified OK（验证通过）|
-| 篡改密文后的签名验证结果 |Verification failure（验证失败）|
+| 签名文件 signature.bin 大小（字节） | 256|
+| 原始密文的签名验证结果 | 	Verified OK|
+| 篡改密文后的签名验证结果 |	Verification failure |
 
 ---
 
@@ -1074,12 +1074,12 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 | 项目 | 你的结果 |
 | :--- | :------- |
-| 解密后的文件是否与原文件一致 |是，解密结果与原文件完全一致|
-| 加密操作使用的密钥文件 |encryption_public_key.pem（加密公钥）|
-| 解密操作使用的密钥文件 |encryption_private_key.pem（加密私钥）|
-| 签名操作使用的密钥文件 |signature_private_key.pem（签名私钥）|
-| 验证签名操作使用的密钥文件 |signature_public_key.pem（签名公钥）|
-| 接收方应先验证签名还是先解密 |应先验证签名，再进行解密|
+| 解密后的文件是否与原文件一致 | 是|
+| 加密操作使用的密钥文件 |	encryption_public_key.pem |
+| 解密操作使用的密钥文件 | 	encryption_private_key.pem|
+| 签名操作使用的密钥文件 | 	signature_private_key.pem|
+| 验证签名操作使用的密钥文件 | 	signature_public_key.pem|
+| 接收方应先验证签名还是先解密 |	先验证签名 |
 
 ---
 
@@ -1092,6 +1092,7 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 数字签名提供了哪三个关键保证？请分别解释它们的含义，并结合本次实验说明这三个保证是如何实现的。
 
 > 答：
+> 数字签名提供：身份认证：验证消息确实来自持有私钥的发送者。实验中，只有用签名私钥才能生成能通过公钥验证的签名，因此接收方可确信发送方身份。完整性保护：确保消息未被篡改。实验中，即使密文只追加一个字节，哈希值完全改变，签名验证失败。不可否认性：发送方无法否认自己发送过该消息。因为私钥唯一且保密，签名行为可被第三方验证，具有法律效力。
 
 ---
 
@@ -1099,7 +1100,7 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 在本实验中，为什么要先计算密文的哈希值，而不是直接对整个密文进行 RSA 签名？请至少列举三个原因。
 
-> 答：1. 为什么要"先哈希后签名"？
+> 答：效率：非对称运算慢，哈希可将任意大小数据压缩为固定短摘要（如256位），签名只需处理摘要。输入长度限制：RSA 加密/签名受限于模数长度，不能直接对长文件操作。接口统一：哈希提供固定长度输入，使签名算法标准化，便于实现和互操作。
 
 ---
 
@@ -1107,7 +1108,8 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 观察你生成的签名文件 `signature.bin` 的大小。为什么 2048 位的 RSA 密钥生成的签名长度是 256 字节？如果使用 4096 位的 RSA 密钥，签名长度会是多少？
 
-> 答：第一步：理解RSA签名的本质​
+> 答：2048 位 RSA 密钥生成的签名是 256 字节，因为签名长度等于模数 $N$ 的字节长度（$2048 / 8 = 256$）。如果使用 4096 位密钥，签名长度将是 $4096 / 8 = 512$ 字节。这是因为 RSA 签名的数学结果为 $H(m)^d \bmod N$，其值范围在 $[0, N)$，所以长度与 $N$ 相同。
+
 
 
 ---
@@ -1118,15 +1120,14 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 提示：抗原像性、抗第二原像性、抗碰撞性
 
-> 答：
-
+> 答：为保证数字签名安全，哈希函数需满足：抗原像性（Preimage Resistance）：给定哈希值 $h$，难以找到 $m$ 使 $H(m)=h$。若不满足，攻击者可从签名反推消息或伪造任意消息的签名。抗第二原像性（Second Preimage Resistance）：给定 $m_1$，难以找到 $m_2 \neq m_1$ 使 $H(m_1)=H(m_2)$。若不满足，攻击者可用同一签名替换消息。抗碰撞性（Collision Resistance）：难以找到任意 $m_1 \neq m_2$ 使哈希相等。若不满足，攻击者可构造两份内容不同但哈希相同的文件，诱骗签名者签一份，然后替换为另一份。
 ---
 
 ### 5. SHA-1 的安全问题
 
 为什么 SHA-1 哈希算法不再被推荐用于数字签名？2017 年 Google 发现的 SHA-1 碰撞攻击对数字签名有什么影响？请举例说明攻击者如何利用这个漏洞。
 
-> 答：
+> 答：SHA-1 不再被推荐用于数字签名，因为 2017 年 Google 与 CWI 实现了首个 SHA-1 碰撞攻击（SHAttered），可以构造两个不同文件具有相同 SHA-1 哈希。对数字签名的影响是：攻击者可让签名者签名一份“正常”文件，然后将签名应用到另一份“恶意”文件（因为哈希相同，签名验证通过）。例如，签名者签了一份“承诺书”，攻击者替换为“转账申请”，接收方验证通过，造成严重后果。
 
 ---
 
@@ -1138,7 +1139,7 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 - 加密私钥、加密公钥分别用于什么操作？
 - 如果攻击者获得了公钥，他能做什么？不能做什么？
 
-> 答：
+> 答：签名私钥：用于生成签名（保密）。签名公钥：用于验证签名（公开）。加密公钥：用于加密消息（公开）。加密私钥：用于解密密文（保密）。如果攻击者获得了公钥，他可以：加密消息（发送给你）、验证你的签名。但不能：解密别人发给你的密文、伪造你的签名（因为没有私钥）。
 
 ---
 
@@ -1146,7 +1147,8 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 结合本实验"加密 -> 哈希 -> 签名 -> 验证 -> 解密"的流程，说明数字签名和消息加密有什么本质区别。它们分别解决什么问题？为什么不能简单地用加密代替签名？
 
-> 答：
+> 答：加密：保证机密性，防止消息被窃听，使用接收方公钥加密，接收方私钥解密。签名：保证认证、完整性和不可否认性，使用发送方私钥签名，发送方公钥验证。加密不能代替签名，因为加密只能防止第三方读取，但无法证明消息来源；而签名能够验证发送方身份，但不提供机密性。两者结合（加密后签名）才能同时保证机密性和完整性/认证。
+
 
 ---
 
@@ -1156,7 +1158,7 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 提示：MAC 使用对称密钥，签名使用非对称密钥
 
-> 答：1. 什么是不可否认性？
+> 答：不可否认性指发送方不能事后否认自己生成过该签名。数字签名使用非对称密钥：只有发送方持有私钥，因此签名行为唯一绑定发送者。而消息认证码（MAC）使用对称密钥，通信双方共享同一密钥，接收方也能生成相同 MAC，无法向第三方证明消息到底由谁生成，因此不提供不可否认性。
 
 ---
 
@@ -1164,7 +1166,7 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 请列举三个数字签名在现实世界中的应用场景（例如软件发布、电子邮件、代码签名等），并说明在这些场景中数字签名解决了什么问题。
 
-> 答：
+> 答：软件发布：开发者用私钥对安装包签名，用户用公钥验证，确保来源可信且未被篡改。电子邮件（S/MIME 或 PGP）：对邮件签名，防止冒充和篡改。代码签名：开发者签名代码，操作系统或浏览器验证签名后允许安装/运行，防止恶意代码伪装。
 
 ---
 
@@ -1174,7 +1176,7 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 提示：考虑可信时间戳服务（TSA）
 
-> 答：
+> 答：数字签名本身只证明签名时刻之后的完整性，不包含时间信息。要证明签名时间，需借助可信时间戳服务（TSA）：将文件哈希发送给 TSA，TSA 返回包含时间戳并签名的时间戳凭证，再将该凭证附在签名数据上。接收者验证时间戳的合法性，从而确定签名时间不晚于该时间戳。
 
 ---
 
@@ -1182,14 +1184,16 @@ ls -lh message.txt encrypted_message.bin signature.bin decrypted_message.txt
 
 为什么本实验使用 2048 位的 RSA 密钥？1024 位是否足够安全？4096 位是否有必要？请查阅资料，说明不同密钥长度的安全性和性能权衡。
 
-> 答：1. 为何本实验选用2048位RSA密钥？​
-'''
+> 答：2048位：当前广泛认为足够安全（NIST 建议至少 2048 位），性能可接受，是大多数场景的最佳选择。1024 位：已被证明可破解（建议 2010 年后停用），不足以抵抗现代计算资源。4096 位：安全性更高，但签名/验证速度慢 4~8 倍，仅在极高安全要求下使用（如根 CA）。通常 2048 位是安全与性能的平衡点。
+
+
+---
 
 ### 12. 签名链
 
 假设 Alice 对一份文件签名，然后 Bob 对"Alice 的签名"进行签名，形成"签名的签名"。这种做法有意义吗？在什么场景下可能需要多重签名？
 
-> 答：1. Bob 对 Alice 的签名再次签名是否有意义？
+> 答：“签名的签名”是有意义的，称为嵌套签名或签名链，常见于：认证链：CA 签名证书，下级 CA 再签名，形成信任链。多方审批：多个负责人依次签名，形成审批流程。时间戳服务：TSA 对已有签名再签名，添加时间信息。多重签名也可指门限签名或多方共同签名，但单链式签名也有实际用途，例如在区块链交易中，多个签名聚合可提高效率。
 
 ---
 
@@ -1334,5 +1338,3 @@ OpenSSL 不直接支持盲签名，需要使用专门的密码学库。
 - 使用 Git Bash（通常包含 OpenSSL）
 - 安装 WSL（Windows Subsystem for Linux）后在 Ubuntu 中操作
 - 或者从 https://slproweb.com/products/Win32OpenSSL.html 下载安装
-
----
